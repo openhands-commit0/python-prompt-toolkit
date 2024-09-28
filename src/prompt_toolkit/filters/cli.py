@@ -3,39 +3,8 @@ For backwards-compatibility. keep this file.
 (Many people are going to have key bindings that rely on this file.)
 """
 from __future__ import annotations
-
 from .app import *
-
-__all__ = [
-    # Old names.
-    "HasArg",
-    "HasCompletions",
-    "HasFocus",
-    "HasSelection",
-    "HasValidationError",
-    "IsDone",
-    "IsReadOnly",
-    "IsMultiline",
-    "RendererHeightIsKnown",
-    "InEditingMode",
-    "InPasteMode",
-    "ViMode",
-    "ViNavigationMode",
-    "ViInsertMode",
-    "ViInsertMultipleMode",
-    "ViReplaceMode",
-    "ViSelectionMode",
-    "ViWaitingForTextObjectMode",
-    "ViDigraphMode",
-    "EmacsMode",
-    "EmacsInsertMode",
-    "EmacsSelectionMode",
-    "IsSearching",
-    "HasSearch",
-    "ControlIsSearchable",
-]
-
-# Keep the original classnames for backwards compatibility.
+__all__ = ['HasArg', 'HasCompletions', 'HasFocus', 'HasSelection', 'HasValidationError', 'IsDone', 'IsReadOnly', 'IsMultiline', 'RendererHeightIsKnown', 'InEditingMode', 'InPasteMode', 'ViMode', 'ViNavigationMode', 'ViInsertMode', 'ViInsertMultipleMode', 'ViReplaceMode', 'ViSelectionMode', 'ViWaitingForTextObjectMode', 'ViDigraphMode', 'EmacsMode', 'EmacsInsertMode', 'EmacsSelectionMode', 'IsSearching', 'HasSearch', 'ControlIsSearchable']
 HasValidationError = lambda: has_validation_error
 HasArg = lambda: has_arg
 IsDone = lambda: is_done
@@ -59,6 +28,5 @@ HasSelection = lambda: has_selection
 HasCompletions = lambda: has_completions
 IsReadOnly = lambda: is_read_only
 IsMultiline = lambda: is_multiline
-
-HasFocus = has_focus  # No lambda here! (Has_focus is callable that returns a callable.)
+HasFocus = has_focus
 InEditingMode = in_editing_mode

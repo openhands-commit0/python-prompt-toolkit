@@ -1,10 +1,7 @@
 from __future__ import annotations
-
 from abc import ABCMeta, abstractmethod
 from typing import Callable, Iterable, Union
-
-__all__ = ["Filter", "Never", "Always", "Condition", "FilterOrBool"]
-
+__all__ = ['Filter', 'Never', 'Always', 'Condition', 'FilterOrBool']
 
 class Filter(metaclass=ABCMeta):
     """
@@ -30,16 +27,13 @@ class Filter(metaclass=ABCMeta):
         """
         Chaining of filters using the & operator.
         """
-        assert isinstance(other, Filter), "Expecting filter, got %r" % other
-
+        assert isinstance(other, Filter), 'Expecting filter, got %r' % other
         if isinstance(other, Always):
             return self
         if isinstance(other, Never):
             return other
-
         if other in self._and_cache:
             return self._and_cache[other]
-
         result = _AndList.create([self, other])
         self._and_cache[other] = result
         return result
@@ -48,16 +42,13 @@ class Filter(metaclass=ABCMeta):
         """
         Chaining of filters using the | operator.
         """
-        assert isinstance(other, Filter), "Expecting filter, got %r" % other
-
+        assert isinstance(other, Filter), 'Expecting filter, got %r' % other
         if isinstance(other, Always):
             return other
         if isinstance(other, Never):
             return self
-
         if other in self._or_cache:
             return self._or_cache[other]
-
         result = _OrList.create([self, other])
         self._or_cache[other] = result
         return result
@@ -68,7 +59,6 @@ class Filter(metaclass=ABCMeta):
         """
         if self._invert_result is None:
             self._invert_result = _Invert(self)
-
         return self._invert_result
 
     def __bool__(self) -> None:
@@ -80,19 +70,7 @@ class Filter(metaclass=ABCMeta):
         defaults for `None` values should be done through an `is None` check
         instead of for instance ``filter1 or Always()``.
         """
-        raise ValueError(
-            "The truth value of a Filter is ambiguous. "
-            "Instead, call it as a function."
-        )
-
-
-def _remove_duplicates(filters: list[Filter]) -> list[Filter]:
-    result = []
-    for f in filters:
-        if f not in result:
-            result.append(f)
-    return result
-
+        raise ValueError('The truth value of a Filter is ambiguous. Instead, call it as a function.')
 
 class _AndList(Filter):
     """
@@ -111,31 +89,13 @@ class _AndList(Filter):
         If there's only one unique filter in the given iterable, it will return
         that one filter instead of an `_AndList`.
         """
-        filters_2: list[Filter] = []
-
-        for f in filters:
-            if isinstance(f, _AndList):  # Turn nested _AndLists into one.
-                filters_2.extend(f.filters)
-            else:
-                filters_2.append(f)
-
-        # Remove duplicates. This could speed up execution, and doesn't make a
-        # difference for the evaluation.
-        filters = _remove_duplicates(filters_2)
-
-        # If only one filter is left, return that without wrapping into an
-        # `_AndList`.
-        if len(filters) == 1:
-            return filters[0]
-
-        return cls(filters)
+        pass
 
     def __call__(self) -> bool:
-        return all(f() for f in self.filters)
+        return all((f() for f in self.filters))
 
     def __repr__(self) -> str:
-        return "&".join(repr(f) for f in self.filters)
-
+        return '&'.join((repr(f) for f in self.filters))
 
 class _OrList(Filter):
     """
@@ -154,31 +114,13 @@ class _OrList(Filter):
         If there's only one unique filter in the given iterable, it will return
         that one filter instead of an `_OrList`.
         """
-        filters_2: list[Filter] = []
-
-        for f in filters:
-            if isinstance(f, _OrList):  # Turn nested _AndLists into one.
-                filters_2.extend(f.filters)
-            else:
-                filters_2.append(f)
-
-        # Remove duplicates. This could speed up execution, and doesn't make a
-        # difference for the evaluation.
-        filters = _remove_duplicates(filters_2)
-
-        # If only one filter is left, return that without wrapping into an
-        # `_AndList`.
-        if len(filters) == 1:
-            return filters[0]
-
-        return cls(filters)
+        pass
 
     def __call__(self) -> bool:
-        return any(f() for f in self.filters)
+        return any((f() for f in self.filters))
 
     def __repr__(self) -> str:
-        return "|".join(repr(f) for f in self.filters)
-
+        return '|'.join((repr(f) for f in self.filters))
 
 class _Invert(Filter):
     """
@@ -193,8 +135,7 @@ class _Invert(Filter):
         return not self.filter()
 
     def __repr__(self) -> str:
-        return "~%r" % self.filter
-
+        return '~%r' % self.filter
 
 class Always(Filter):
     """
@@ -210,7 +151,6 @@ class Always(Filter):
     def __invert__(self) -> Never:
         return Never()
 
-
 class Never(Filter):
     """
     Never enable feature.
@@ -224,7 +164,6 @@ class Never(Filter):
 
     def __invert__(self) -> Always:
         return Always()
-
 
 class Condition(Filter):
     """
@@ -248,8 +187,5 @@ class Condition(Filter):
         return self.func()
 
     def __repr__(self) -> str:
-        return "Condition(%r)" % self.func
-
-
-# Often used as type annotation.
+        return 'Condition(%r)' % self.func
 FilterOrBool = Union[Filter, bool]
