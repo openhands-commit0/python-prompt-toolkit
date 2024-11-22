@@ -107,7 +107,6 @@ def in_paste_mode() -> bool:
     """When we are pasting text from the clipboard."""
     return get_app().paste_mode
 
-@memoized()
 def in_editing_mode(editing_mode: EditingMode) -> Filter:
     """
     Check whether a given editing mode is active. (Vi or Emacs.)
