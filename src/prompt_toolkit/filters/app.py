@@ -111,10 +111,9 @@ def in_editing_mode(editing_mode: EditingMode) -> Filter:
     """
     Check whether a given editing mode is active. (Vi or Emacs.)
     """
-    @Condition
     def in_editing_mode_filter() -> bool:
         return get_app().editing_mode == editing_mode
-    return in_editing_mode_filter
+    return Condition(in_editing_mode_filter)
 
 @Condition
 def vi_navigation_mode() -> bool:
