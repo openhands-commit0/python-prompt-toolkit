@@ -177,7 +177,7 @@ class Never(Filter):
     def __invert__(self) -> Always:
         return Always()
 
-class Condition(Filter):
+class Condition:
     """
     Turn any callable into a Filter. The callable is supposed to not take any
     arguments.
@@ -191,13 +191,14 @@ class Condition(Filter):
     :param func: Callable which takes no inputs and returns a boolean.
     """
 
-    def __init__(self, func: Callable[[], bool]) -> None:
-        super().__init__()
-        self.func = func
+    def __new__(cls, func: Callable[[], bool]) -> Filter:
+        """Create a new Filter instance from this callable."""
+        class _Condition(Filter):
+            def __call__(self) -> bool:
+                return func()
 
-    def __call__(self) -> bool:
-        return self.func()
+            def __repr__(self) -> str:
+                return 'Condition(%r)' % func
 
-    def __repr__(self) -> str:
-        return 'Condition(%r)' % self.func
+        return _Condition()
 FilterOrBool = Union[Filter, bool]
