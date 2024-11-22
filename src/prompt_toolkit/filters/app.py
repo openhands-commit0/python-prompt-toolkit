@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, cast
 from prompt_toolkit.application.current import get_app
 from prompt_toolkit.cache import memoized
 from prompt_toolkit.enums import EditingMode
-from .base import Condition
+from .base import Condition, Filter
 if TYPE_CHECKING:
     from prompt_toolkit.layout.layout import FocusableElement
 __all__ = ['has_arg', 'has_completions', 'completion_is_selected', 'has_focus', 'buffer_has_focus', 'has_selection', 'has_suggestion', 'has_validation_error', 'is_done', 'is_read_only', 'is_multiline', 'renderer_height_is_known', 'in_editing_mode', 'in_paste_mode', 'vi_mode', 'vi_navigation_mode', 'vi_insert_mode', 'vi_insert_multiple_mode', 'vi_replace_mode', 'vi_selection_mode', 'vi_waiting_for_text_object_mode', 'vi_digraph_mode', 'vi_recording_macro', 'emacs_mode', 'emacs_insert_mode', 'emacs_selection_mode', 'shift_selection_mode', 'is_searching', 'control_is_searchable', 'vi_search_direction_reversed']
@@ -102,14 +102,13 @@ def renderer_height_is_known() -> bool:
     return get_app().renderer.height_is_known
 
 @memoized()
-def in_editing_mode(editing_mode: EditingMode) -> Condition:
+def in_editing_mode(editing_mode: EditingMode) -> Filter:
     """
     Check whether a given editing mode is active. (Vi or Emacs.)
     """
-    @Condition
-    def in_editing_mode() -> bool:
+    def in_editing_mode_filter() -> bool:
         return get_app().editing_mode == editing_mode
-    return in_editing_mode
+    return Condition(in_editing_mode_filter)
 
 @Condition
 def vi_navigation_mode() -> bool:
