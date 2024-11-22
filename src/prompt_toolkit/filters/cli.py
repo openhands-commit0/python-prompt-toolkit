@@ -3,7 +3,14 @@ For backwards-compatibility. keep this file.
 (Many people are going to have key bindings that rely on this file.)
 """
 from __future__ import annotations
-from .app import *
+from .app import (
+    has_validation_error, has_arg, is_done, renderer_height_is_known,
+    vi_navigation_mode, in_paste_mode, emacs_mode, emacs_insert_mode,
+    vi_mode, is_searching, control_is_searchable, emacs_selection_mode,
+    vi_digraph_mode, vi_waiting_for_text_object_mode, vi_selection_mode,
+    vi_replace_mode, vi_insert_multiple_mode, vi_insert_mode, has_selection,
+    has_completions, is_read_only, is_multiline, has_focus, in_editing_mode
+)
 __all__ = ['HasArg', 'HasCompletions', 'HasFocus', 'HasSelection', 'HasValidationError', 'IsDone', 'IsReadOnly', 'IsMultiline', 'RendererHeightIsKnown', 'InEditingMode', 'InPasteMode', 'ViMode', 'ViNavigationMode', 'ViInsertMode', 'ViInsertMultipleMode', 'ViReplaceMode', 'ViSelectionMode', 'ViWaitingForTextObjectMode', 'ViDigraphMode', 'EmacsMode', 'EmacsInsertMode', 'EmacsSelectionMode', 'IsSearching', 'HasSearch', 'ControlIsSearchable']
 HasValidationError = lambda: has_validation_error
 HasArg = lambda: has_arg
