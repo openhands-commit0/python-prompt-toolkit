@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABCMeta, abstractmethod
-from typing import Callable, Iterable, Union
+from typing import Any, Callable, Iterable, Union
 __all__ = ['Filter', 'Never', 'Always', 'Condition', 'FilterOrBool']
 
 class Filter(metaclass=ABCMeta):
@@ -191,14 +191,24 @@ class Condition:
     :param func: Callable which takes no inputs and returns a boolean.
     """
 
-    def __new__(cls, func: Callable[[], bool]) -> Filter:
-        """Create a new Filter instance from this callable."""
-        class _Condition(Filter):
-            def __call__(self) -> bool:
-                return func()
+    def __init__(self, func: Callable[[], bool]) -> None:
+        self.func = func
 
-            def __repr__(self) -> str:
-                return 'Condition(%r)' % func
+    def __call__(self, *args: Any, **kwargs: Any) -> Filter:
+        """Create a new Filter instance from this callable."""
+        if args or kwargs:
+            raise ValueError("Condition does not accept any arguments")
+
+        class _Condition(Filter):
+            def __init__(self2) -> None:
+                super().__init__()
+                self2.func = self.func
+
+            def __call__(self2) -> bool:
+                return self2.func()
+
+            def __repr__(self2) -> str:
+                return 'Condition(%r)' % self2.func
 
         return _Condition()
 FilterOrBool = Union[Filter, bool]
