@@ -101,6 +101,11 @@ def renderer_height_is_known() -> bool:
     """
     return get_app().renderer.height_is_known
 
+@Condition
+def in_paste_mode() -> bool:
+    """When we are pasting text from the clipboard."""
+    return get_app().paste_mode
+
 @memoized()
 def in_editing_mode(editing_mode: EditingMode) -> Filter:
     """
@@ -128,6 +133,59 @@ def vi_recording_macro() -> bool:
 def emacs_mode() -> bool:
     """When the Emacs bindings are active."""
     return get_app().editing_mode == EditingMode.EMACS
+
+@Condition
+def emacs_insert_mode() -> bool:
+    """When Emacs is in insert mode."""
+    app = get_app()
+    return app.editing_mode == EditingMode.EMACS and not bool(app.current_buffer.selection_state)
+
+@Condition
+def emacs_selection_mode() -> bool:
+    """When Emacs has a selection."""
+    app = get_app()
+    return app.editing_mode == EditingMode.EMACS and bool(app.current_buffer.selection_state)
+
+@Condition
+def vi_mode() -> bool:
+    """When the Vi bindings are active."""
+    return get_app().editing_mode == EditingMode.VI
+
+@Condition
+def vi_insert_mode() -> bool:
+    """When Vi is in insert mode."""
+    app = get_app()
+    return app.editing_mode == EditingMode.VI and app.vi_state.input_mode == 'insert'
+
+@Condition
+def vi_insert_multiple_mode() -> bool:
+    """When Vi is in insert mode, entering multiple characters."""
+    app = get_app()
+    return app.editing_mode == EditingMode.VI and app.vi_state.input_mode == 'insert_multiple'
+
+@Condition
+def vi_replace_mode() -> bool:
+    """When Vi is in replace mode."""
+    app = get_app()
+    return app.editing_mode == EditingMode.VI and app.vi_state.input_mode == 'replace'
+
+@Condition
+def vi_selection_mode() -> bool:
+    """When Vi has a selection."""
+    app = get_app()
+    return app.editing_mode == EditingMode.VI and app.vi_state.operator_func is not None
+
+@Condition
+def vi_waiting_for_text_object_mode() -> bool:
+    """When Vi is waiting for a text object."""
+    app = get_app()
+    return app.editing_mode == EditingMode.VI and app.vi_state.waiting_for_text_object
+
+@Condition
+def vi_digraph_mode() -> bool:
+    """When Vi is in digraph mode."""
+    app = get_app()
+    return app.editing_mode == EditingMode.VI and app.vi_state.waiting_for_digraph
 
 @Condition
 def is_searching() -> bool:
