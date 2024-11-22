@@ -26,11 +26,24 @@ class SimpleCache(Generic[_T, _U]):
         If not found, call `getter_func` to resolve it, and put that on the top
         of the cache instead.
         """
-        pass
+        if key in self._data:
+            return self._data[key]
+
+        result = getter_func()
+        self._data[key] = result
+        self._keys.append(key)
+
+        if len(self._data) > self.maxsize:
+            key_to_remove = self._keys.popleft()
+            if key_to_remove in self._data:
+                del self._data[key_to_remove]
+
+        return result
 
     def clear(self) -> None:
         """Clear cache."""
-        pass
+        self._data.clear()
+        self._keys.clear()
 _K = TypeVar('_K', bound=Tuple[Hashable, ...])
 _V = TypeVar('_V')
 
@@ -68,4 +81,14 @@ def memoized(maxsize: int=1024) -> Callable[[_F], _F]:
     """
     Memoization decorator for immutable classes and pure functions.
     """
-    pass
+    def decorator(function: _F) -> _F:
+        cache = SimpleCache(maxsize=maxsize)
+
+        @wraps(function)
+        def wrapped(*args: Any, **kwargs: Any) -> Any:
+            key = (args, tuple(sorted(kwargs.items())))
+            return cache.get(cast(Hashable, key), lambda: function(*args, **kwargs))
+
+        return cast(_F, wrapped)
+
+    return decorator
