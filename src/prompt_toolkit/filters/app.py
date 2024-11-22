@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, cast
 from prompt_toolkit.application.current import get_app
 from prompt_toolkit.cache import memoized
 from prompt_toolkit.enums import EditingMode
+from prompt_toolkit.selection import SelectionType
 from .base import Condition, Filter
 if TYPE_CHECKING:
     from prompt_toolkit.layout.layout import FocusableElement
@@ -151,6 +152,9 @@ def vi_mode() -> bool:
     """When the Vi bindings are active."""
     return get_app().editing_mode == EditingMode.VI
 
+# Create an alias for vi_mode to avoid circular imports
+vi_mode = vi_mode
+
 @Condition
 def vi_insert_mode() -> bool:
     """When Vi is in insert mode."""
@@ -203,3 +207,9 @@ def control_is_searchable() -> bool:
 def vi_search_direction_reversed() -> bool:
     """When the '/' and '?' key bindings for Vi-style searching have been reversed."""
     return get_app().reverse_vi_search_direction()
+
+@Condition
+def shift_selection_mode() -> bool:
+    """When shift has been pressed while selecting text."""
+    app = get_app()
+    return bool(app.current_buffer.selection_state and app.current_buffer.selection_state.type == SelectionType.CHARACTERS)
